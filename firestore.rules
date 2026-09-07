@@ -1,0 +1,18 @@
+rules_version = '2';
+// Casi todo pasa por la Netlify Function (Admin SDK), que ignora estas reglas.
+// Desde el navegador solo se permite LEER avisos y configuración (para mostrarlos en tiempo real).
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /avisos/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /config/app {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

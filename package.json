@@ -1,0 +1,16 @@
+{
+  "name": "adeci26-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "App del Congreso ADECI 2026 · Netlify + Firebase",
+  "type": "module",
+  "scripts": {
+    "test": "cd tests && node --import ./register.mjs test-api.mjs && node --import ./register2.mjs test-app.mjs && node --import ./register2.mjs test-admin.mjs"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0"
+  },
+  "devDependencies": {
+    "jsdom": "^25.0.0"
+  }
+}
