@@ -36,10 +36,11 @@ ok($('.apoyo img[alt="ADOX"]'), 'logo ADOX en el ingreso');
 $('#nombre').value='María'; $('#apellido').value='López'; $('#email').value='maria@test.com';
 await submit($('#f-login'));
 ok(!$('#f-login') && text().includes('María'), 'después del registro entra a “Ahora” con su nombre');
-ok(!$('#nav').hidden && $$('#nav button').length === 5, 'nav con 5 pestañas visible');
+ok(!$('#nav').hidden && $$('#nav button').length === 6 && $$('#nav button')[5].textContent.includes('Libro'), 'nav con 6 botones, el último es Libro');
+w.open = (u)=>{ w._opened=u; }; click($$('#nav button')[5]); await tick(); ok(!w._opened && $('#toast').textContent.includes('próximamente'), 'Libro sin URL avisa que no está disponible');
 ok(!text().includes('Resistencia antimicrobiana'), 'sin etiquetas de eje en el inicio');
-ok(text().includes('0 de 5 gotas') && text().includes('Viví el congreso y ganá') && text().includes('Conocé el juego'), 'inicio: lema, gotas en 0 y botón al juego');
-ok(text().includes('Comité organizador') && text().includes('Libro de resúmenes'), 'inicio: comité y libro');
+ok(text().includes('0 de 5 gotas') && text().includes('Participá y ganá') && text().includes('Recorré tus 5 momentos de ADECI 2026') && text().includes('Retirá tu regalo') && text().includes('Conocé el juego'), 'inicio: nuevo texto y botón al juego');
+ok(text().includes('Conocé el congreso') && text().includes('Comité organizador') && !text().includes('Libro de resúmenes'), 'inicio: sección Conocé el congreso, sin libro');
 ok([...w.document.querySelectorAll('.body > .card')].pop().querySelector('img[alt^="ADOX"]'), 'logo ADOX al pie');
 ok(text().includes('empieza el jueves 17') || text().includes('En sala') || text().includes('Terminó'), 'bloque “ahora” contextual (hoy no es día de congreso)');
 
@@ -96,7 +97,7 @@ await nav('#/juego'); ok(text().includes('Día 1: 2 de 3 correctas') && $$('.ste
 console.log('credencial y stand');
 await nav('#/yo'); await tick(200);
 ok($('#qr canvas')?.dataset.text?.startsWith('https://adeci26.netlify.app/staff.html?c='), 'QR es una URL que abre el escáner: ' + $('#qr canvas')?.dataset.text);
-ok(text().includes('4 de 5 gotas') && !text().includes('Inscripto'), 'todavía no habilitado');
+ok(text().includes('4 de 5 gotas') && !text().includes('Inscripto') && text().includes('Mi QR'), 'todavía no habilitado; pantalla «Mi QR»');
 const uid = $('#qr canvas').dataset.text.split('?c=')[1];
 await fetch('/api/admin_staff_add',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+adm.token},body:JSON.stringify({email:'stand@adox.com'})});
 const st = await (await fetch('/api/staff_login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:'stand@adox.com',pin:'9999'})})).json();
@@ -119,7 +120,9 @@ await nav('#/adox'); ok($('.adox-head img') && text().includes('Cómo participar
 await nav('#/comite'); ok($$('.cm').length === 9, 'comité: 2 autoridades + 7 científico');
 click($$('.cm')[0]); await tick(); ok($('.modal h3').textContent.includes('Suayter') && $$('.modal li').length >= 5, 'bio de la presidenta');
 click($('.modal .close')); await tick();
-await nav('#/yo'); ok(!text().includes('Ejes temáticos') && text().includes('Hotel Quórum'), 'sin ejes temáticos; sede Hotel Quórum');
+await nav('#/yo'); ok(!text().includes('Ejes temáticos') && !text().includes('Comité organizador') && !text().includes('certificado') && text().includes('Hotel Quórum'), 'Yo: sin comité, libro ni certificado; sede Hotel Quórum');
+await fetch('/api/admin_config_save',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+adm.token},body:JSON.stringify({libroUrl:'https://adeci.org.ar/libro.pdf'})}); w.document.dispatchEvent(new w.Event('visibilitychange')); await tick(120);
+click($$('#nav button')[5]); await tick(); ok(w._opened === 'https://adeci.org.ar/libro.pdf', 'Libro con URL abre el PDF');
 // aviso
 await fetch('/api/admin_avisos_add',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+adm.token},body:JSON.stringify({titulo:'Cambio de horario',texto:'La mesa arranca 15:00'})});
 w.document.dispatchEvent(new w.Event('visibilitychange')); await tick(120); await nav('#/ahora');

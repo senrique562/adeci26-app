@@ -244,8 +244,8 @@ img{max-width:100%}
 
 /* ── nav ── */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;pointer-events:none}
-.nav .in{pointer-events:auto;width:100%;max-width:560px;height:calc(var(--nav-h) + var(--sab));padding-bottom:var(--sab);background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr)}
-.nav button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;font-weight:800;color:var(--txt-3);transition:.15s}
+.nav .in{pointer-events:auto;width:100%;max-width:560px;height:calc(var(--nav-h) + var(--sab));padding-bottom:var(--sab);background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr)}
+.nav button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;padding:0 2px;font-weight:800;color:var(--txt-3);transition:.15s}
 .nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .nav button.on{color:var(--azul)}
 
