@@ -52,14 +52,3 @@ export const COMITE_CIENTIFICO = [
       'Enfermera en Control de Infecciones en el Hospital Universitario Austral.',
       'Magíster en Gestión Hospitalaria y Servicios de Salud y Magíster en Prevención y Control de Infecciones. Docente de Epidemiología, Universidad Austral.'] },
 ];
-
-export const EJES_TEMATICOS = [
-  'Resistencia antimicrobiana y multirresistencia (OMR)',
-  'Esterilización, desinfección de alto nivel y reprocesamiento',
-  'Prevención de infecciones asociadas al cuidado de la salud (IAAS)',
-  'Seguridad ambiental hospitalaria',
-  'Salud pública, emergencias y preparación',
-  'Inteligencia Artificial y Big Data en control de infecciones',
-  'Liderazgo, formación y certificación profesional',
-  'Cuidado, humanización y seguridad del paciente',
-];

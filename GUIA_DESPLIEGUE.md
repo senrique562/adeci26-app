@@ -8,7 +8,7 @@ Qué vas a tener al final:
 | Qué | Dónde |
 |---|---|
 | App de asistentes | `https://adeci26.netlify.app/` |
-| Escáner del stand ADOX | `https://adeci26.netlify.app/staff.html` |
+| Escáner del stand ADOX (regalo e inscripción al sorteo) | `https://adeci26.netlify.app/staff.html` |
 | Panel de administración | `https://adeci26.netlify.app/admin.html` |
 
 ---
@@ -84,8 +84,8 @@ Alternativa con Node.js instalado en tu computadora: en la carpeta del proyecto,
 | `APP_SECRET` | Una frase larga al azar, por ejemplo 40 letras y números mezclados. Nadie la va a tipear: sirve para firmar las sesiones. |
 | `ADMIN_PIN` | El PIN del panel de administración (6 dígitos o más). |
 | `ADMIN_EMAILS` | `secretaria@essentia-medical.com.ar,info@essentia-medical.com.ar,silvia@essentia-medica.com.ar,senrique562@gmail.com` |
-| `STAFF_PIN` | El PIN que van a usar las 10 personas de ADOX en el escáner. Distinto del anterior. |
-| `TEST_MODE` | `true` (permite probar check-in y trivia antes del 17). **El 16/9 cambiarlo a `false`.** |
+| `STAFF_PIN` | El PIN que usan las 10 personas de ADOX en el escáner del stand. Distinto del anterior. |
+| `TEST_MODE` | `true` (permite probar la trivia y la confirmación de llegada antes del 17). **El 16/9 cambiarlo a `false`.** |
 
 Después de cargar las variables: **Deploys → Trigger deploy → Deploy site** para que tomen efecto.
 
@@ -104,8 +104,9 @@ Si algo falla: en Netlify, **Logs → Functions → api** muestra el error. Los 
 
 Todo esto se hace en `/admin.html`, sin tocar archivos.
 
-1. **Staff ADOX**: agregá los 10 correos de las personas del stand. Ellas entran a `/staff.html` con su correo + `STAFF_PIN`. Probá vos una vez: registrate en la app, abrí "Yo" y escaneá tu propio QR desde otro celular (o escribí el código de 8 letras a mano).
-2. **Trivia**: cargá las 3 preguntas de cada día (ver `TRIVIA_BORRADOR.md`, a validar por el Comité Científico). Marcá la opción correcta con el círculo.
+1. **Staff ADOX**: agregá los correos de las personas del stand. Entran a `/staff.html` con su correo + `STAFF_PIN`. El escáner inscribe en el sorteo a quien llega con las 5 gotas (y ahí se le entrega el regalo); a quien no las tiene le muestra qué le falta. Probá vos: registrate en la app, completá los cinco momentos (con `TEST_MODE=true` se puede), abrí "Yo" y escaneá tu QR desde otro celular con el escáner, o escribí el código de 8 letras a mano.
+   > El QR también se puede leer con la cámara normal del teléfono: abre el escáner con el código ya cargado. Si el staff está logueado, se procesa solo.
+2. **Trivia**: cargá el banco de 6 preguntas de cada día (ver `TRIVIA_BORRADOR.md`, a validar por el Comité Científico). Marcá la opción correcta con el círculo. A cada participante la app le muestra 3 al azar.
 3. **Configuración**: ubicación del stand, texto del sorteo (cuando ADOX defina horario y premios) y el enlace al PDF del libro de resúmenes cuando esté.
 4. **Avisos**: probá publicar uno y mirá cómo aparece en la app.
 5. **Programa**: solo si cambia un título o un speaker. Completás el campo y listo; vacío = original.
@@ -115,19 +116,21 @@ Todo esto se hace en `/admin.html`, sin tocar archivos.
 ## Parte 4 · Antes y durante el congreso
 
 **Martes 16/9**
-- `TEST_MODE` → `false` y redesplegar. Desde ese momento el check-in y la trivia solo se habilitan en su día.
+- `TEST_MODE` → `false` y redesplegar. Desde ese momento la trivia y la confirmación de llegada solo se habilitan los días del congreso.
 - Borrá los usuarios de prueba: en Firebase Console → Firestore → colección `users`, borrá los documentos de prueba (y los mismos correos en `emails`). O dejalos: no molestan en las métricas si son pocos.
 - Imprimí el QR con la URL `https://adeci26.netlify.app/` para credenciales y cartelería. Cualquier generador de QR sirve.
 
 **Durante**
+- Mesa de acreditación: nada que hacer con la app, salvo mostrar el QR del cartel a quien no la tenga.
 - Avisos urgentes: panel → Avisos. Aparecen en todos los celulares en segundos.
 - Cambio de horario o speaker: panel → Programa.
-- Sorteo: panel → Sorteo → botón. Si la persona no está, "Ausente" y volvés a sortear.
+- Stand ADOX: su staff escanea a quienes llegan con 5 gotas, entrega el regalo y con eso quedan inscriptos.
+- Sorteo: panel → Sorteo → botón (entre los inscriptos en el stand). Si la persona no está, "Ausente" y volvés a sortear.
 - Si un asistente dice que no le anda: que abra la app en el navegador (Chrome o Safari) y se registre con el **mismo correo**. Recupera todo.
 
 **Después**
 - Panel → Métricas → **Exportar**: participantes y avance, comentarios por sesión (para el Comité Científico), e-pósters visitados. Se abren en Excel.
-- Eso es lo que le va a ADOX como informe post evento, más las visitas al stand.
+- Eso es lo que le va a ADOX como informe post evento, más los inscriptos en el stand y el ranking de intereses del momento 5.
 
 ---
 

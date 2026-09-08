@@ -34,7 +34,7 @@
   .login .plate{max-width:420px;margin:0 auto}
   .bar{height:8px;background:var(--celeste-grey);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--teal)}
   .pill{display:inline-block;font-size:11px;font-weight:800;padding:3px 8px;border-radius:99px;background:var(--celeste-grey);color:var(--navy)}
-  .pill.g{background:#e9f8f1;color:#1a7a52}.pill.r{background:#fdeeee;color:#9b1c1c}
+  .pill.g{background:var(--teal);color:#fff}.pill.r{background:var(--celeste-grey);color:var(--navy-mid)}
   .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .ov{display:grid;grid-template-columns:110px 1fr 1fr;gap:8px;align-items:start;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
   .ov input{width:100%;border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px}
@@ -80,17 +80,19 @@ async function metricas(){
   const cps=Object.entries(m.comentariosPorSesion||{}).sort((a,b)=>b[1]-a[1]);
   $('#wrap').innerHTML=`<div class="grid">
     <div class="kpi"><span>Registrados</span><b>${m.total}</b></div>
-    <div class="kpi"><span>Visitaron el stand</span><b>${m.m5}</b></div>
-    <div class="kpi"><span>Habilitados para el sorteo (5/5)</span><b>${m.completos}</b></div>
+    <div class="kpi"><span>Con las 5 gotas</span><b>${m.completos}</b></div>
+    <div class="kpi"><span>Inscriptos en el sorteo (stand ADOX)</span><b>${m.inscriptos}</b></div>
     <div class="kpi"><span>Comentarios de sesiones</span><b>${m.comentarios}</b></div>
   </div>
   <div class="sec-t">Avance por momento</div>
   <div class="card" style="padding:0;overflow:hidden"><table>
-    ${fila('m1','1 · Check-in')}${fila('m2','2 · Trivia')}${fila('m3','3 · E-pósters')}${fila('m4','4 · Tres comentarios')}${fila('m5','5 · Visita al stand')}
-    <tr><td colspan="4" style="color:var(--txt-3)">Check-in día 1: <b>${m.checkinD1}</b> · día 2: <b>${m.checkinD2}</b> &nbsp;|&nbsp; Trivia día 1: <b>${m.triviaD1}</b> · día 2: <b>${m.triviaD2}</b> &nbsp;|&nbsp; Gotas repartidas: <b>${m.gotasTotal}</b></td></tr>
+    ${fila('m1','1 · Confirmó su llegada')}${fila('m2','2 · Trivia')}${fila('m3','3 · E-pósters')}${fila('m4','4 · Comentarios en tres sesiones')}${fila('m5','5 · Conocé ADOX (intereses)')}
+    <tr><td colspan="4" style="color:var(--txt-3)">Trivia día 1: <b>${m.triviaD1}</b> respondieron (${m.triviaD1?Math.round(m.triviaAciertosD1/m.triviaD1*10)/10:0} aciertos promedio) · día 2: <b>${m.triviaD2}</b> (${m.triviaD2?Math.round(m.triviaAciertosD2/m.triviaD2*10)/10:0}) &nbsp;|&nbsp; Gotas repartidas: <b>${m.gotasTotal}</b></td></tr>
   </table></div>
   <div class="sec-t">Distribución</div>
-  <div class="card"><div class="actions">${m.porCompletos.map((n,i)=>`<span class="pill ${i===5?'g':''}">${i} momento${i===1?'':'s'}: ${n}</span>`).join('')}</div></div>
+  <div class="card"><div class="actions">${m.porCompletos.map((n,i)=>`<span class="pill ${i===5?'g':''}">${i} gota${i===1?'':'s'}: ${n}</span>`).join('')}</div></div>
+  <div class="sec-t">Intereses para el stand ADOX (momento 5)</div>
+  <div class="card"><div class="actions">${Object.entries(m.intereses||{}).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`<span class="pill">${({manos:'Higiene de manos',superficies:'Superficies',biofilm:'Biofilm',esterilizacion:'Esterilización y DAN',monitoreo:'Monitoreo',otro:'Otro'})[k]||k}: <b>${n}</b></span>`).join('')||'<span class="muted">Sin datos todavía.</span>'}</div></div>
   <div class="sec-t">Comentarios por sesión</div>
   <div class="card" style="padding:0;overflow:hidden"><table>${cps.length?cps.map(([id,n])=>`<tr><td style="color:var(--txt-3);white-space:nowrap">${id}</td><td>${esc(titulo(id))}</td><td><b>${n}</b></td></tr>`).join(''):'<tr><td class="muted">Todavía no hay comentarios.</td></tr>'}</table></div>
   <div class="sec-t">Exportar (CSV)</div>
@@ -116,13 +118,14 @@ let triviaDia=1;
 async function trivia(){
   const d=await api('admin_trivia_get');
   const qs=(d[triviaDia]||[]);
-  while(qs.length<3) qs.push({texto:'',opciones:['','','',''],correcta:0,explicacion:''});
+  while(qs.length<6) qs.push({texto:'',opciones:['','','',''],correcta:0,explicacion:''});
   $('#wrap').innerHTML=`<div class="days" style="padding:0 0 14px;max-width:420px">${DIAS.map(x=>`<button class="${x.n===triviaDia?'on':''}" data-td="${x.n}">${x.label} · Día ${x.n}</button>`).join('')}</div>
+  <div class="card" style="margin-bottom:14px"><div class="b">Banco de preguntas del día ${triviaDia}</div><div class="muted small">Cargá hasta 6 (mínimo 3). A cada participante la app le muestra <b>3 al azar, en orden distinto</b>, para que no se copien entre vecinos. Las preguntas sin enunciado se ignoran.</div></div>
   <form id="ft">${qs.map((q,i)=>`<div class="q" data-i="${i}"><div class="b" style="margin-bottom:8px">Pregunta ${i+1}</div>
     <div class="field"><input name="texto" value="${esc(q.texto)}" placeholder="Enunciado de la pregunta" maxlength="300"></div>
     <div class="opts">${[0,1,2,3].map(j=>`<label style="display:flex;gap:6px;align-items:center;font-size:12px;font-weight:800;color:var(--txt-3)"><input type="radio" name="c${i}" value="${j}" ${Number(q.correcta)===j?'checked':''}> ${'ABCD'[j]}</label><input name="op" value="${esc(q.opciones?.[j]||'')}" placeholder="Opción ${'ABCD'[j]}" maxlength="160" style="border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:14px">`).join('')}</div>
     <div class="field" style="margin-top:8px"><input name="explicacion" value="${esc(q.explicacion||'')}" placeholder="Explicación breve que ve el asistente después de responder" maxlength="400"></div></div>`).join('')}
-    <div class="actions"><button class="btn btn-p">Guardar trivia del día ${triviaDia}</button><span class="muted">Marcá con el círculo cuál es la opción correcta. Las preguntas sin enunciado se ignoran.</span></div></form>`;
+    <div class="actions"><button class="btn btn-p">Guardar trivia del día ${triviaDia}</button><span class="muted">Marcá con el círculo cuál es la opción correcta.</span></div></form>`;
   document.querySelectorAll('[data-td]').forEach(b=>b.onclick=()=>{triviaDia=Number(b.dataset.td);render();});
   $('#ft').onsubmit=async e=>{e.preventDefault();const preguntas=[...document.querySelectorAll('.q')].map((el,i)=>({texto:el.querySelector('[name=texto]').value,opciones:[...el.querySelectorAll('[name=op]')].map(x=>x.value),correcta:Number(el.querySelector(`[name=c${i}]:checked`)?.value||0),explicacion:el.querySelector('[name=explicacion]').value}));try{const r=await api('admin_trivia_save',{dia:triviaDia,preguntas});toast(`Guardadas ${r.cantidad} preguntas`);}catch(er){toast(er.message,true);}};
 }
@@ -134,7 +137,7 @@ async function sorteo(){
   $('#wrap').innerHTML=`<div class="grid" style="grid-template-columns:1fr 1fr">
     <div>
       <div class="card"><div class="b" style="font-size:16px">Sortear</div>
-        <div class="field mt-s"><label>Participan</label><select id="modo"><option value="completos">Quienes completaron los 5 momentos</option><option value="visitas">Todos los que fueron escaneados en el stand</option></select></div>
+        <div class="field mt-s"><label>Participan</label><select id="modo"><option value="inscriptos">Inscriptos en el stand ADOX (escaneados con 5 gotas)</option><option value="completos">Todos los que tienen 5 gotas, aunque no hayan pasado por el stand</option></select></div>
         <button class="btn btn-teal full" id="btnSorteo" style="font-size:16px;padding:16px">🎲 Sortear</button>
         <div class="help">Si la persona sorteada no está presente, marcala como ausente y volvé a sortear: queda excluida de los siguientes intentos de esta ronda.</div>
         <div class="actions mt-s"><button class="btn btn-w sm" id="reset">Nueva ronda (limpiar excluidos)</button><span class="muted" id="exc">${excluir.length} excluido/s</span></div>
@@ -142,7 +145,7 @@ async function sorteo(){
       <div id="win"></div>
     </div>
     <div><div class="sec-t" style="margin-top:0">Historial</div><div class="card" style="padding:0;overflow:hidden"><table><tr><th>Cuándo</th><th>Persona</th><th>Criterio</th><th>Estado</th></tr>
-      ${d.sorteos.length?d.sorteos.map(s=>`<tr><td style="white-space:nowrap">${fecha(s.at)}</td><td><b>${esc(s.nombre)} ${esc(s.apellido)}</b><br><span class="muted">${esc(s.email)}</span></td><td class="muted">${s.modo==='visitas'?'visitas':'5/5'} · ${s.candidatos} cand.</td><td>${s.estado==='entregado'?'<span class="pill g">Entregado</span>':s.estado==='ausente'?'<span class="pill r">Ausente</span>':`<button class="btn btn-g sm" data-ok="${s.id}">Entregado</button> <button class="btn btn-w sm" data-no="${s.id}" data-uid="${s.uid}">Ausente</button>`}</td></tr>`).join(''):'<tr><td colspan="4" class="muted">Todavía no se sorteó.</td></tr>'}</table></div></div></div>`;
+      ${d.sorteos.length?d.sorteos.map(s=>`<tr><td style="white-space:nowrap">${fecha(s.at)}</td><td><b>${esc(s.nombre)} ${esc(s.apellido)}</b><br><span class="muted">${esc(s.email)}</span></td><td class="muted">${s.modo==='inscriptos'?'inscriptos':'5 gotas'} · ${s.candidatos} cand.</td><td>${s.estado==='entregado'?'<span class="pill g">Entregado</span>':s.estado==='ausente'?'<span class="pill r">Ausente</span>':`<button class="btn btn-g sm" data-ok="${s.id}">Entregado</button> <button class="btn btn-w sm" data-no="${s.id}" data-uid="${s.uid}">Ausente</button>`}</td></tr>`).join(''):'<tr><td colspan="4" class="muted">Todavía no se sorteó.</td></tr>'}</table></div></div></div>`;
   $('#btnSorteo').onclick=async()=>{const b=$('#btnSorteo');b.disabled=true;b.textContent='Sorteando…';await new Promise(r=>setTimeout(r,900));try{const r=await api('admin_sorteo',{modo:$('#modo').value,excluir});if(!r.ok){toast(r.mensaje,true);}else{$('#win').innerHTML=`<div class="winner mt"><div class="lb" style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--celeste);font-weight:800">Salió sorteado/a</div><div class="n">${esc(r.ganador.nombre)} ${esc(r.ganador.apellido)}</div><div class="e">${esc(r.ganador.email)} · entre ${r.candidatos} participantes</div><div class="actions mt" style="justify-content:center"><button class="btn btn-w" data-ok="${r.id}">✓ Está presente, entregado</button><button class="btn btn-o" data-no="${r.id}" data-uid="${r.ganador.uid}">Ausente, sortear otro</button></div></div>`;bind();}}catch(er){toast(er.message,true);}b.disabled=false;b.textContent='🎲 Sortear';};
   $('#reset').onclick=()=>{excluir=[];$('#exc').textContent='0 excluido/s';toast('Ronda nueva');};
   function bind(){document.querySelectorAll('[data-ok]').forEach(b=>b.onclick=async()=>{await api('admin_sorteo_marcar',{id:b.dataset.ok,estado:'entregado'});toast('Marcado como entregado');render();});
@@ -156,7 +159,7 @@ async function staff(){
   $('#wrap').innerHTML=`<div class="grid" style="grid-template-columns:1fr 1.4fr">
     <div class="card"><div class="b" style="font-size:16px;margin-bottom:10px">Habilitar persona del stand</div>
       <form id="fs"><div class="field"><label>Nombre</label><input name="nombre" maxlength="80"></div><div class="field"><label>Correo</label><input name="email" type="email" required></div><button class="btn btn-p full">Habilitar</button>
-      <div class="help">Entran en <b>/staff.html</b> con su correo y el PIN del stand (definido en Netlify como STAFF_PIN).</div></form></div>
+      <div class="help">Entran en <b>/staff.html</b> con su correo y el PIN (STAFF_PIN en Netlify). El escáner inscribe en el sorteo a quien llega con las 5 gotas y marca la entrega del regalo.</div></form></div>
     <div><div class="sec-t" style="margin-top:0">Habilitados (${d.staff.length})</div><div class="card" style="padding:0;overflow:hidden"><table>${d.staff.length?d.staff.map(s=>`<tr><td><b>${esc(s.nombre||'—')}</b></td><td>${esc(s.email)}</td><td style="text-align:right"><button class="btn btn-w sm" data-del="${esc(s.email)}">Quitar</button></td></tr>`).join(''):'<tr><td class="muted">Nadie habilitado todavía.</td></tr>'}</table></div></div></div>`;
   $('#fs').onsubmit=async e=>{e.preventDefault();const fd=new FormData(e.target);try{await api('admin_staff_add',{nombre:fd.get('nombre'),email:fd.get('email')});toast('Habilitado');render();}catch(er){toast(er.message,true);}};
   document.querySelectorAll('[data-del]').forEach(b=>b.onclick=async()=>{if(confirm('¿Quitar acceso a '+b.dataset.del+'?')){await api('admin_staff_del',{email:b.dataset.del});render();}});

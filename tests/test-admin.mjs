@@ -10,7 +10,7 @@ globalThis.fetch = async (url, opts) => handler(new Request('https://adeci26.net
 globalThis.confirm=()=>true;
 // registrar dos usuarios y una visita para que haya datos
 const post=async(a,b,t)=>(await fetch('/api/'+a,{method:'POST',headers:{'content-type':'application/json',...(t?{authorization:'Bearer '+t}:{})},body:JSON.stringify(b)})).json();
-const u1=await post('register',{nombre:'Ana',apellido:'Pérez',email:'ana@t.com'}); await post('checkin',{dia:1},u1.token); await post('eposter',{titulo:'Trabajo sobre biofilm'},u1.token);
+const u1=await post('register',{nombre:'Ana',apellido:'Pérez',email:'ana@t.com'}); await post('eposter',{titulo:'Trabajo sobre biofilm',comentario:'Interesante'},u1.token);
 await post('register',{nombre:'Beto',apellido:'Gómez',email:'beto@t.com'});
 let fails=0; const ok=(c,m)=>{if(!c){fails++;console.log('  ✗',m);}else console.log('  ✓',m);}; const tick=(ms=60)=>new Promise(r=>setTimeout(r,ms));
 const $=(s)=>w.document.querySelector(s), $$=(s)=>[...w.document.querySelectorAll(s)], text=()=>w.document.body.textContent;

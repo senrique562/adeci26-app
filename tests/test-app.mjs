@@ -37,12 +37,15 @@ $('#nombre').value='María'; $('#apellido').value='López'; $('#email').value='m
 await submit($('#f-login'));
 ok(!$('#f-login') && text().includes('María'), 'después del registro entra a “Ahora” con su nombre');
 ok(!$('#nav').hidden && $$('#nav button').length === 5, 'nav con 5 pestañas visible');
-ok(text().includes('0 de 5 momentos'), 'tarjeta de progreso en 0');
+ok(!text().includes('Resistencia antimicrobiana'), 'sin etiquetas de eje en el inicio');
+ok(text().includes('0 de 5 gotas') && text().includes('Viví el congreso y ganá') && text().includes('Conocé el juego'), 'inicio: lema, gotas en 0 y botón al juego');
+ok(text().includes('Comité organizador') && text().includes('Libro de resúmenes'), 'inicio: comité y libro');
+ok([...w.document.querySelectorAll('.body > .card')].pop().querySelector('img[alt^="ADOX"]'), 'logo ADOX al pie');
 ok(text().includes('empieza el jueves 17') || text().includes('En sala') || text().includes('Terminó'), 'bloque “ahora” contextual (hoy no es día de congreso)');
 
 console.log('programa');
 await nav('#/programa');
-ok($$('.slot').length === 13, 'día 1: 13 bloques');
+ok($$('.slot').length === 13 && !$('.eje'), 'día 1: 13 bloques, sin etiquetas de eje');
 click($$('.days button')[1]); await tick();
 ok($$('.slot').length === 16 && $$('.days button')[1].classList.contains('on'), 'día 2: 16 bloques y pestaña activa');
 ok(text().includes('Biofilms: el enemigo oculto') && text().includes('Mg. Andrea Novau'), 'títulos y nombres renderizados');
@@ -64,50 +67,59 @@ for (const id of ['d1-05','d1-06','d1-08']) { await nav('#/sesion/'+id); $('#f-c
 ok(text().includes('Ya dejaste tu comentario'), 'confirma comentario guardado');
 await nav('#/juego');
 ok(text().includes('3 de 3 comentarios') && $$('.step.ok').length === 1, 'momento 4 completo en la ruta');
-ok(text().includes('¡Sumá gotas y ganá!') && text().includes('OMS © 2009'), 'explicación del juego + atribución OMS');
-ok(text().includes('Antes de realizar una tarea limpia o aséptica') && text().includes('Después del contacto con el entorno del paciente'), 'enunciados OMS');
+ok(text().includes('participá de un sorteo auspiciado por ADOX') && !text().includes('OMS'), 'texto nuevo del juego, sin referencia a OMS');
+ok(text().includes('Registrate y confirmá tu llegada') && text().includes('Recorré los e-pósters') && !text().includes('En el congreso:'), 'momentos reescritos');
 
-console.log('check-in y e-póster');
+console.log('acreditación y e-póster');
 w.localStorage.setItem('adeci26:fakeNow','2026-09-17T14:50'); await nav('#/ahora');
 ok(text().includes('En sala') && text().includes('Agua en el hospital'), 'con hora simulada, muestra la sesión en curso correcta (14:45–15:30)');
 ok(text().includes('15:30') && text().includes('Biofilm y limpieza'), 'muestra “a continuación”');
 await nav('#/juego');
-click($('[data-act=checkin]')); await tick(80);
-ok(text().includes('Check-in día 1') && $$('.step.ok').length === 2, 'check-in día 1 acreditado');
-$('#f-eposter input').value = 'Vigilancia de bacteriemias asociadas a catéter'; await submit($('#f-eposter'));
-ok(text().includes('Anotaste: «Vigilancia') && $$('.step.ok').length === 3, 'e-póster acreditado (3 momentos)');
+ok($('[data-act=checkin]'), 'momento 1: botón «Ya estoy en el congreso» (hora simulada = día 1)');
+click($('[data-act=checkin]')); await tick(100); ok($$('.step.ok').length === 2 && text().includes('Gota ganada'), 'llegada confirmada (2 gotas con el momento 4)');
+$('#f-eposter input').value = 'Vigilancia de bacteriemias asociadas a catéter'; $('#f-eposter textarea').value = 'Buen diseño del estudio'; await submit($('#f-eposter'));
+ok(text().includes('«Vigilancia') && text().includes('Buen diseño') && $$('.step.ok').length === 3, 'e-póster con comentario acreditado (3 gotas)');
 
 console.log('trivia');
 // cargar trivia como admin
 const adm = await (await fetch('/api/admin_login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:'admin@test.com',pin:'1234'})})).json();
-await fetch('/api/admin_trivia_save',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+adm.token},body:JSON.stringify({dia:1,preguntas:[{texto:'¿Cuántos momentos?',opciones:['3','4','5','6'],correcta:2,explicacion:'Son cinco.'},{texto:'P2',opciones:['a','b','c','d'],correcta:0,explicacion:'x'},{texto:'P3',opciones:['a','b','c','d'],correcta:1,explicacion:'y'}]})});
+await fetch('/api/admin_trivia_save',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+adm.token},body:JSON.stringify({dia:1,preguntas:[1,2,3,4,5,6].map(n=>({texto:'Pregunta número '+n,opciones:['a','b','c','d'],correcta:n%4,explicacion:'Explicación '+n}))})});
 await nav('#/trivia/1'); await tick(120);
-ok($$('.qcard').length === 3 && $('#f-trivia'), 'trivia del día 1 con 3 preguntas');
-click($$('.opt[data-q="0"]')[2]); click($$('.opt[data-q="1"]')[0]); 
+ok($$('.qcard').length === 3 && $('#f-trivia'), 'trivia del día 1 muestra 3 preguntas del banco de 6');
+const nums = $$('.qcard .qt').map(e => Number(e.textContent.replace(/\D/g,'')));
+click($$('.opt[data-q="0"]')[nums[0]%4]); click($$('.opt[data-q="1"]')[nums[1]%4]);
 await submit($('#f-trivia')); ok(text().includes('Respondé todas'), 'exige responder todo');
-click($$('.opt[data-q="2"]')[3]); await submit($('#f-trivia')); await tick(150);
-ok(text().includes('2/3') && text().includes('Son cinco.'), 'resultado 2/3 con explicaciones');
-await nav('#/juego'); ok(text().includes('Día 1: 2/3 correctas') && $$('.step.ok').length === 4, 'momento 2 acreditado (4 de 5)');
+click($$('.opt[data-q="2"]')[(nums[2]+1)%4]); await submit($('#f-trivia')); await tick(150);
+ok(text().includes('2/3') && text().includes('Explicación '+nums[0]), 'resultado 2/3 con explicaciones de sus propias preguntas');
+await nav('#/juego'); ok(text().includes('Día 1: 2 de 3 correctas') && $$('.step.ok').length === 4, 'momento 2 acreditado (4 gotas)');
 
 console.log('credencial y stand');
 await nav('#/yo'); await tick(200);
-ok($('#qr canvas')?.dataset.text?.startsWith('ADECI26:'), 'QR con ADECI26:UID');
-ok(text().includes('4 de 5 momentos') && !text().includes('Habilitado para el sorteo'), 'todavía no habilitado');
-const uid = $('#qr canvas').dataset.text.split(':')[1];
+ok($('#qr canvas')?.dataset.text?.startsWith('https://adeci26.netlify.app/staff.html?c='), 'QR es una URL que abre el escáner: ' + $('#qr canvas')?.dataset.text);
+ok(text().includes('4 de 5 gotas') && !text().includes('Inscripto'), 'todavía no habilitado');
+const uid = $('#qr canvas').dataset.text.split('?c=')[1];
 await fetch('/api/admin_staff_add',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+adm.token},body:JSON.stringify({email:'stand@adox.com'})});
 const st = await (await fetch('/api/staff_login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:'stand@adox.com',pin:'9999'})})).json();
+const rechazo = await (await fetch('/api/staff_scan',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+st.token},body:JSON.stringify({uid:$('#qr canvas').dataset.text})})).json();
+ok(rechazo.ok === false && rechazo.motivo === 'incompleto', 'con 4 gotas el stand no inscribe');
+await nav('#/juego'); ok($('#f-adox') && $$('#f-adox input[name=int]').length === 6, 'momento 5: formulario «Conocé ADOX» con 6 opciones');
+await submit($('#f-adox')); ok(text().includes('Marcá al menos una opción'), 'exige marcar algo');
+$$('#f-adox input[name=int]')[2].checked = true; $$('#f-adox input[name=int]')[0].checked = true; await submit($('#f-adox'));
+ok($$('.step.ok').length === 5 && text().includes('Pasá por el stand de ADOX a retirar tu regalo'), '5 gotas → tarjeta final con regalo y sorteo');
+ok(text().includes('Control de biofilm') && text().includes('Higiene de manos'), 'muestra los intereses guardados');
+await nav('#/yo'); await tick(200); ok(text().includes('5 gotas · pasá por el stand'), 'credencial: 5 gotas, pendiente stand');
 const scan = await (await fetch('/api/staff_scan',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+st.token},body:JSON.stringify({uid:'ADECI26:'+uid})})).json();
-ok(scan.ok && scan.progreso.habilitado, 'escaneo en stand habilita');
+ok(scan.ok && scan.progreso.inscripto, 'escaneo en stand con 5 gotas inscribe');
 w.document.dispatchEvent(new w.Event('visibilitychange')); await tick(120);
-ok(text().includes('Habilitado para el sorteo'), 'al volver a la app, la credencial aparece habilitada');
-await nav('#/juego'); ok($$('.step.ok').length === 5 && $('.score.done'), '5 de 5, tarjeta de puntaje en verde');
+ok(text().includes('Inscripto en el sorteo'), 'al volver a la app, la credencial dice inscripto');
+await nav('#/juego'); ok($$('.step.ok').length === 5 && $('.score.done') && text().includes('Ya estás en el sorteo'), '5 de 5, inscripto, tarjeta final confirmada');
 
 console.log('otros');
 await nav('#/adox'); ok($('.adox-head img') && text().includes('Cómo participar') && text().includes('adox.com.ar'), 'pantalla ADOX');
 await nav('#/comite'); ok($$('.cm').length === 9, 'comité: 2 autoridades + 7 científico');
 click($$('.cm')[0]); await tick(); ok($('.modal h3').textContent.includes('Suayter') && $$('.modal li').length >= 5, 'bio de la presidenta');
 click($('.modal .close')); await tick();
-await nav('#/ejes'); ok($$('.kv').length === 8, 'ocho ejes');
+await nav('#/yo'); ok(!text().includes('Ejes temáticos') && text().includes('Hotel Quórum'), 'sin ejes temáticos; sede Hotel Quórum');
 // aviso
 await fetch('/api/admin_avisos_add',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+adm.token},body:JSON.stringify({titulo:'Cambio de horario',texto:'La mesa arranca 15:00'})});
 w.document.dispatchEvent(new w.Event('visibilitychange')); await tick(120); await nav('#/ahora');

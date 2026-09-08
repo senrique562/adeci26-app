@@ -14,25 +14,25 @@ Puede participar toda persona mayor de 18 años que asista al Congreso y se regi
 No pueden participar del sorteo: el personal del Sponsor, los integrantes de la Comisión Directiva de ADECI, del Comité Organizador y del Comité Científico del Congreso, el personal de la empresa organizadora [Essentia Medical] ni sus familiares directos.
 
 ## 4. Mecánica
-El Juego se inspira en los «5 momentos para la higiene de manos» de la Organización Mundial de la Salud (OMS © 2009), que se usan con fines educativos y con la atribución correspondiente. Cada momento se cumple realizando una acción dentro del congreso:
+El Juego propone cinco «momentos» de participación activa en el congreso. Cada momento completado dentro de la aplicación otorga una gota (punto):
 
-| Momento | Acción en el congreso |
+| Momento | Acción en la aplicación |
 |---|---|
-| 1 | Registrarse en la aplicación y confirmar la llegada al congreso desde la aplicación |
+| 1 | Registrarse y confirmar la llegada al congreso |
 | 2 | Responder la trivia del día (tres preguntas sobre control de infecciones) |
-| 3 | Recorrer los e-pósters e indicar en la aplicación el título de un trabajo visitado |
+| 3 | Indicar el título y un comentario sobre un e-póster visitado |
 | 4 | Dejar un comentario sobre tres sesiones del programa |
-| 5 | Visitar el stand del Sponsor, donde el personal escanea la credencial digital de la aplicación |
+| 5 | Indicar qué soluciones del Sponsor le interesa conocer en el stand |
 
-Cada acción otorga «gotas» (puntos) que se muestran en la aplicación. Las gotas no tienen valor económico ni son canjeables.
+Las gotas no tienen valor económico ni son canjeables.
 
-## 5. Habilitación para el sorteo
-Queda habilitado para el sorteo todo participante que complete los cinco momentos antes del momento del sorteo. La credencial digital del participante indica «Habilitado para el sorteo» cuando esa condición se cumple. [Si ADOX define otro criterio, por ejemplo «todos los que visitaron el stand», ajustar aquí y en la configuración de la aplicación.]
+## 5. Regalo e inscripción al sorteo
+Quien reúna las cinco gotas podrá presentarse en el stand del Sponsor con su credencial digital. El personal del stand escanea el código QR de la aplicación, entrega [un regalo / descripción] y registra a la persona como inscripta en el sorteo. Cada participante puede inscribirse y recibir el regalo una sola vez. La inscripción está disponible hasta [hora] del [día], antes del sorteo. [Si el regalo es limitado: «hasta agotar stock de ___ unidades».]
 
 ## 6. Sorteo
 - Se realizará(n) [cantidad] sorteo(s) en el stand del Sponsor, el [día] a las [hora].
-- El sorteo se efectúa mediante la herramienta de la aplicación, que elige al azar entre las personas habilitadas, ante la presencia de [un representante de ADECI y uno del Sponsor].
-- **Es requisito estar presente en el stand en el momento del sorteo.** Si la persona sorteada no se presenta dentro de [2] minutos de ser anunciada, se realiza un nuevo sorteo entre las restantes personas habilitadas, y así sucesivamente hasta entregar el premio.
+- El sorteo se efectúa mediante la herramienta de la aplicación, que elige al azar entre las personas inscriptas en el stand, ante la presencia de [un representante de ADECI y uno del Sponsor].
+- **Es requisito estar presente en el stand en el momento del sorteo.** Si la persona sorteada no se presenta dentro de [2] minutos de ser anunciada, se realiza un nuevo sorteo entre las restantes personas inscriptas, y así sucesivamente hasta entregar el premio.
 - Para retirar el premio, la persona debe exhibir la credencial digital de la aplicación y la credencial física del congreso a su nombre, o un documento de identidad. Los datos deben coincidir con los del registro.
 - Cada participante puede ganar un único premio.
 
@@ -43,7 +43,7 @@ Queda habilitado para el sorteo todo participante que complete los cinco momento
 El registro es personal. Está prohibido crear más de una cuenta por persona, usar datos de terceros o intentar alterar el funcionamiento de la aplicación. La organización podrá excluir del Juego, sin necesidad de aviso, a quien incurra en estas conductas. Los puntajes se calculan en el servidor y no pueden ser modificados por el participante.
 
 ## 9. Datos personales
-Los datos ingresados (nombre, apellido y correo electrónico) se utilizan únicamente para el funcionamiento del Juego, la identificación de las personas ganadoras y la elaboración de estadísticas de participación en forma agregada (por ejemplo, cantidad de asistentes que completaron cada momento). ADECI no cede los datos individuales a terceros ni los utiliza con fines comerciales. El Sponsor recibe únicamente información agregada y anónima sobre la participación, salvo los datos de las personas ganadoras necesarios para la entrega de premios. Los comentarios sobre sesiones se comparten con el Comité Científico sin identificación del autor. Conforme a la Ley 25.326, el titular de los datos puede solicitar su acceso, rectificación o supresión escribiendo a adeci@adeci.org.ar. Los datos se conservan hasta [30 días] después del cierre del congreso y luego se eliminan.
+Los datos ingresados (nombre, apellido y correo electrónico) se utilizan únicamente para el funcionamiento del Juego, la identificación de las personas ganadoras y la elaboración de estadísticas de participación en forma agregada (por ejemplo, cantidad de asistentes que completaron cada momento). ADECI no cede los datos individuales a terceros ni los utiliza con fines comerciales. El Sponsor recibe únicamente información agregada y anónima sobre la participación (incluidos los intereses indicados en el momento 5), salvo los datos de las personas ganadoras necesarios para la entrega de premios. Los comentarios sobre sesiones se comparten con el Comité Científico sin identificación del autor. Conforme a la Ley 25.326, el titular de los datos puede solicitar su acceso, rectificación o supresión escribiendo a adeci@adeci.org.ar. Los datos se conservan hasta [30 días] después del cierre del congreso y luego se eliminan.
 
 ## 10. Aceptación y modificaciones
 La participación implica la aceptación de estas bases. ADECI podrá modificarlas o suspender el Juego por causas de fuerza mayor o fallas técnicas ajenas a su voluntad, comunicándolo por la propia aplicación. Ante cualquier diferencia de interpretación, resuelve la organización del Congreso.
