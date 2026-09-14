@@ -1,8 +1,8 @@
 // ADECI26 · service worker: deja la app usable sin señal (programa, speakers, estilos).
 // Las llamadas a /api/ nunca se cachean.
-const CACHE = 'adeci26-v1';
+const CACHE = 'adeci26-v2';
 const SHELL = ['/', '/index.html', '/css/app.css', '/js/app.js', '/data/programa.js', '/data/speakers.js', '/data/comite.js', '/js/firebase-config.js',
-  '/img/adeci-logo.jpg', '/img/adox-logo.png', '/img/adox-wordmark.png', '/img/adox-wordmark-white.png', '/img/icon-192.png', '/manifest.webmanifest'];
+  '/img/adeci-logo.jpg', '/img/adox-wordmark.png', '/img/adox-wordmark-white.png', '/img/icon-192.png', '/manifest.webmanifest'];
 
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });

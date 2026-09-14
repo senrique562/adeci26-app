@@ -85,8 +85,8 @@ function nombresDe(s) {
 }
 
 // ───────────────────────── vistas ─────────────────────────
-function appbar(titulo, back = null, right = '') {
-  return `<div class="appbar">
+function appbar(titulo, back = null, right = '', cls = '') {
+  return `<div class="appbar${cls ? ' ' + cls : ''}">
     ${back ? `<button class="back" data-go="${back}" aria-label="Volver">‹</button>` : ''}
     <div class="word grow">${titulo}</div>
     <div class="right">${right}</div>
@@ -149,22 +149,21 @@ function vAhora() {
     ${avisos}
     ${live}
     ${prox}
+    <div class="card tap row mt" data-go="comite"><div class="grow"><div class="b">Autoridades</div><div class="muted">Comité Organizador y Científico</div></div><span style="color:var(--txt-3);font-size:20px">›</span></div>
     <div class="sec-t">Participá y ganá</div>
     <div class="card" style="border-left:3px solid var(--teal)">
       <div style="font-size:22px;font-weight:900;color:var(--navy);letter-spacing:-.5px;line-height:1.15">Recorré tus 5 momentos de ADECI 2026</div>
-      <div class="small mt-s" style="color:var(--txt-2);line-height:1.55">Te invitamos a un recorrido interactivo por el congreso.<br>Cuando cumplís cada uno de tus 5 momentos, sumás una gota.<br>Con tus 5 gotas, acercate al stand de ADOX.<br>Retirá tu regalo y registrate para el sorteo.</div>
+      <div class="small mt-s" style="color:var(--txt-2);line-height:1.55">Te invitamos a participar en un recorrido interactivo por el congreso.<br>Sumás una gota al cumplir cada momento.<br>Cuando tengas tus 5 gotas, acercate al stand de ADOX a retirar tu regalo y participar en el sorteo con sorpresas para el cierre del congreso.</div>
       <div class="row mt" style="gap:10px">
         <div style="display:flex;gap:5px">${[1,2,3,4,5].map(n => `<span style="font-size:18px;${n <= completos ? '' : 'opacity:.25;filter:grayscale(1)'}">💧</span>`).join('')}</div>
         <div class="muted grow">${completos} de 5 gotas</div>
       </div>
       <button class="btn btn-p full mt" data-go="juego">Conocé el juego</button>
     </div>
-    <div class="sec-t">Conocé el congreso</div>
-    <div class="card tap row" data-go="comite"><div class="grow"><div class="b">Comité organizador</div><div class="muted">Autoridades y Comité Científico</div></div><span style="color:var(--txt-3);font-size:20px">›</span></div>
     <div class="sec-t">Con el apoyo de</div>
     <div class="card tap center" data-go="adox" style="padding:22px 15px 18px">
-      <img src="/img/adox-logo.png" alt="ADOX · Gestionando innovación" style="width:82%;max-width:320px">
-      <div class="muted mt">${esc(S.config.standTexto || 'Stand de ADOX')} · Cómo participar del sorteo →</div>
+      <img src="/img/adox-wordmark.png" alt="ADOX" style="width:46%;max-width:180px">
+      <div class="muted mt">Visitanos en el stand y conocé cómo participar en el sorteo →</div>
     </div>
   </div>`;
 }
@@ -185,9 +184,11 @@ function vPrograma() {
       ${nombres ? `<div class="sp">${esc(nombres)}</div>` : ''}
     </div>`;
   }).join('');
-  return appbar('Programa') + `<div class="days">${DIAS.map(d => `<button class="${d.n === n ? 'on' : ''}" data-dia="${d.n}">${d.label} · Día ${d.n}</button>`).join('')}</div>
+  return appbar('Programa', null, '', 'center') +
+    `<div class="prog-hint">Hacé click sobre cada sesión para los contenidos y disertantes</div>
+    <div class="days">${DIAS.map(d => `<button class="${d.n === n ? 'on' : ''}" data-dia="${d.n}">${d.label} · Día ${d.n}</button>`).join('')}</div>
     <div class="body"><div class="tl">${lista}</div>
-    <div class="muted center mt">Tocá una sesión para ver quién participa y dejar tu comentario.<br>Sala plenaria única · Hotel Quórum, Córdoba.</div></div>`;
+    <div class="muted center mt">Sala plenaria única · Hotel Quórum, Córdoba.</div></div>`;
 }
 
 function personHTML(id, tema) {
@@ -249,7 +250,7 @@ function vJuego() {
   const final = p.completos === 5 ? `<div class="card" style="background:var(--grad);color:#fff;border:0;margin-bottom:16px">
       <div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--celeste)">${p.inscripto ? 'Inscripción confirmada' : '¡Completaste los 5 momentos!'}</div>
       <div style="font-size:19px;font-weight:900;margin-top:4px;line-height:1.2">${p.inscripto ? 'Ya estás en el sorteo. ¡Suerte!' : 'Pasá por el stand de ADOX a retirar tu regalo y registrarte para el sorteo'}</div>
-      <div class="small mt-s" style="color:var(--celeste-pale)">${p.inscripto ? 'Tu regalo ya fue entregado. Acercate al stand para el sorteo: para ganar, hay que estar presente.' : 'Abrí «Yo» y mostrá tu QR: el staff de ADOX lo escanea con su celular y listo.'}</div>
+      <div class="small mt-s" style="color:var(--celeste-pale)">${p.inscripto ? 'Tu regalo ya fue entregado. Acercate al stand para el sorteo: para ganar, tenés que estar presente.' : 'Abrí «Yo» y mostrá tu QR: el staff de ADOX lo escanea con su celular y listo.'}</div>
       ${p.inscripto ? '' : `<button class="btn btn-w mt" data-go="yo">Mostrar mi QR</button>`}</div>` : '';
 
   // M2 · trivia
@@ -282,7 +283,7 @@ function vJuego() {
       <div class="muted" style="font-size:10.5px;font-weight:800;letter-spacing:2.2px;text-transform:uppercase;color:var(--teal)">Tus 5 momentos en ADECI 2026</div>
       <div style="font-size:24px;font-weight:900;color:var(--navy);letter-spacing:-.6px;line-height:1.1;margin-top:5px">Viví el congreso y ganá</div>
       <div class="small mt-s" style="color:var(--txt-2);line-height:1.5">Viví tus «cinco momentos» en ADECI 2026 y participá de un sorteo auspiciado por ADOX. Cada momento marca una instancia de tu participación activa en el congreso, y lo pensamos para ayudarte a aprovecharlo al máximo. Enterate cómo, ganando una gota en cada momento:</div>
-      <div class="callout mt"><div class="t">Con las 5 gotas, pasá por el stand de ADOX</div><div class="x">Retirás tu regalo y te registrás para el sorteo mostrando tu QR (pestaña «Yo»). Para ganar, hay que estar presente. ${esc(S.config.sorteoInfo || '')}</div></div>
+      <div class="callout mt"><div class="t">Con las 5 gotas, pasá por el stand de ADOX</div><div class="x">Retirás tu regalo y te registrás para el sorteo mostrando tu QR (pestaña «Yo»). Para ganar, tenés que estar presente. ¡No te lo pierdas!</div></div>
     </div>
 
     <div class="ruta">
@@ -341,17 +342,17 @@ function vTrivia(dia, data) {
 
 function vAdox() {
   return `<div class="adox-band"></div><div class="appbar" style="background:#fff;color:var(--navy)"><button class="back" data-go="ahora" style="background:var(--paper);color:var(--navy)">‹</button><div class="word grow">Sponsor</div></div>
-  <div class="adox-head"><img src="/img/adox-logo.png" alt="ADOX · Gestionando innovación"></div>
+  <div class="adox-head"><img src="/img/adox-wordmark.png" alt="ADOX"></div>
   <div class="body">
     <div class="card" style="border-left:3px solid var(--adox)">
-      <div class="b" style="font-size:15.5px">${esc(S.config.standTexto || 'Stand de ADOX · hall central')}</div>
+      <div class="b" style="font-size:15.5px">Participá en el juego de tus 5 momentos en ADECI 2026</div>
       <div class="small mt-s" style="color:var(--txt-2)">Acá retirás tu regalo y te registrás para el sorteo cuando tengas las cinco gotas.</div>
     </div>
     <div class="sec-t">Cómo participar</div>
     <div class="card">
       <div class="stepline"><span class="numb">1</span><div><b class="b">Juntá las cinco gotas</b> en la app: llegada, trivia, e-pósters, tres comentarios y «Conocé ADOX».</div></div>
       <div class="stepline"><span class="numb">2</span><div><b class="b">Vení al stand con la app abierta en «Yo».</b> Escaneamos tu QR, retirás tu regalo y quedás registrado para el sorteo.</div></div>
-      <div class="stepline" style="margin-bottom:0"><span class="numb t">3</span><div><b class="b">Acercate al stand para el sorteo.</b> Para ganar, hay que estar presente. ${esc(S.config.sorteoInfo || '')}</div></div>
+      <div class="stepline" style="margin-bottom:0"><span class="numb t">3</span><div><b class="b">Acercate al stand para el sorteo.</b> Para ganar, tenés que estar presente.<br>¡No te lo pierdas!</div></div>
       <button class="btn ${(S.progreso?.completos === 5) ? 'btn-adox' : 'btn-g'} full mt" data-go="${(S.progreso?.completos === 5) ? 'yo' : 'juego'}">${(S.progreso?.completos === 5) ? 'Mostrar mi QR' : 'Ver mis 5 momentos'}</button>
     </div>
     <div class="sec-t">Qué vas a encontrar</div>
@@ -362,14 +363,13 @@ function vAdox() {
       <div class="prod"><div class="ic">🌡️</div><div><div class="nn">Mapeo térmico y monitoreo</div><div class="ds">Validación de ambientes y equipos</div></div></div>
     </div>
     <a class="btn btn-w full" href="https://adox.com.ar/" target="_blank" rel="noopener">Visitar adox.com.ar ↗</a>
-    <div class="muted center mt">ADOX · Gestionando innovación</div>
   </div>`;
 }
 
 function vYo() {
   const u = S.user, p = S.progreso;
   const hab = p?.habilitado;
-  return appbar('Mi QR') + `<div class="body">
+  return appbar('Mi QR', null, '', 'center') + `<div class="body">
     <div class="badge">
       <div class="nm">${esc(u.nombre)} ${esc(u.apellido)}</div>
       <div class="ro">Congreso ADECI 2026</div>
@@ -377,7 +377,7 @@ function vYo() {
       <div class="id">${esc(u.uid)}</div>
       <div class="hab ${hab ? 'on' : ''}">${p?.inscripto ? '✓ Inscripto en el sorteo' : hab ? '✓ 5 gotas · pasá por el stand ADOX' : `${p?.completos ?? 0} de 5 gotas`}</div>
     </div>
-    <div class="muted center small mb">${p?.inscripto ? 'Ya retiraste tu regalo y estás en el sorteo. Acercate al stand para el sorteo: para ganar, hay que estar presente.' : hab ? 'Mostrá este QR en el stand de ADOX: te lo escanean, retirás tu regalo y quedás en el sorteo.' : 'Cuando tengas las cinco gotas, mostrá este QR en el stand de ADOX.'}</div>
+    <div class="muted center small mb">${p?.inscripto ? 'Ya retiraste tu regalo y estás en el sorteo. Acercate al stand para el sorteo: para ganar, tenés que estar presente.' : hab ? 'Mostrá este QR en el stand de ADOX: te lo escanean, retirás tu regalo y quedás en el sorteo.' : 'Cuando tengas las cinco gotas, mostrá este QR en el stand de ADOX.'}</div>
     <div class="card">
       <div class="kv"><span class="k">Correo</span><span class="v">${esc(u.email)}</span></div>
       <div class="kv"><span class="k">Gotas</span><span class="v" style="color:var(--teal)">${p?.gotas ?? 0} de 5</span></div>
@@ -395,7 +395,7 @@ function vYo() {
 
 function vComite() {
   const item = (c, i, grupo) => `<button class="cm" data-comite="${grupo}:${i}"><img src="${c.foto}" alt="" loading="lazy"><div>${c.cargo ? `<div class="c">${esc(c.cargo)}</div>` : ''}<div class="n">${esc(c.nombre)}</div><div class="muted">Ver perfil ›</div></div></button>`;
-  return appbar('Comité organizador', 'yo') + `<div class="body">
+  return appbar('Comité Organizador y Científico', 'yo') + `<div class="body">
     <div class="sec-t">Autoridades</div><div class="card" style="padding-top:2px;padding-bottom:2px">${AUTORIDADES.map((c, i) => item(c, i, 'a')).join('')}</div>
     <div class="sec-t">Comité científico</div><div class="card" style="padding-top:2px;padding-bottom:2px">${COMITE_CIENTIFICO.map((c, i) => item(c, i, 'c')).join('')}</div>
   </div>`;

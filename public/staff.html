@@ -13,7 +13,7 @@
   body{background:#0b1524;color:#fff}
   #app{background:#0b1524;padding-bottom:24px}
   .head{padding:calc(16px + var(--sat)) 18px 12px;display:flex;align-items:center;gap:12px}
-  .head .r{font-size:10.5px;font-weight:800;letter-spacing:2.4px;text-transform:uppercase;color:#ff8a72}
+  .head .r{font-size:10.5px;font-weight:800;letter-spacing:2.4px;text-transform:uppercase;color:#ef8f9c}
   .head h3{font-size:19px;font-weight:900;margin-top:2px}
   .head img{height:26px;margin-left:auto}
   .viewport{margin:8px 18px 0;aspect-ratio:1;border-radius:18px;background:#16233a;position:relative;overflow:hidden}
@@ -55,7 +55,7 @@ function logout(){token='';me=null;localStorage.removeItem(LS+':token');localSto
 
 function render(){
   if(!token||!me){ $('#app').innerHTML=`<div class="login">
-    <div class="plate"><img src="/img/adox-logo.png" alt="ADOX" style="width:70%;display:block;margin:0 auto 16px">
+    <div class="plate"><img src="/img/adox-wordmark.png" alt="ADOX" style="width:42%;display:block;margin:0 auto 16px">
       <h2>Stand ADOX · Escáner</h2><p>Registra en el sorteo a quienes completaron los 5 momentos y entrega el regalo. Ingresá tu correo y el PIN.</p>
       <form id="f" class="mt">
         <div class="field"><label>Correo</label><input name="email" type="email" required autocomplete="email"></div>
