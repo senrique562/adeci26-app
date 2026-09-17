@@ -248,15 +248,7 @@ const acciones = {
     const email = emailKey(clean(body.email, 120)), pin = clean(body.pin, 20);
     if (!emailOk(email)) return err('Correo inválido.');
     const esAdmin = ADMIN_EMAILS.includes(email) && pinOk(pin, ADMIN_PIN);
-    if (!esAdmin) {
-      if (!pinOk(pin, STAFF_PIN)) return err('PIN incorrecto.', 401);
-      const s = await fs.collection('staff').doc(email).get();
-      if (!s.exists) return err('Este correo no está habilitado como staff.', 403);
-    }
-    const token = sign({ e: email, r: esAdmin ? 'admin' : 'staff', x: Date.now() + 1000 * 3600 * 24 * 7 });
-    return json({ token, role: esAdmin ? 'admin' : 'staff', email });
-  },
-
+    if (!esAdmin && !pinOk(pin, STAFF_PIN)) return err('PIN incorrecto.', 401);
   async staff_scan({ auth, body, fs }) {
     if (!['staff', 'admin'].includes(auth.r)) return err('No autorizado.', 403);
     const uid = clean(body.uid, 200).toUpperCase().replace(/^.*[?&]C=/, '').replace(/^ADECI26:/, '').replace(/[^A-Z0-9].*$/, '');
